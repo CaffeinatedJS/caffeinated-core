@@ -1,0 +1,46 @@
+{
+	
+	  "name"				: "CaffeinatedJS"
+	, "version"				: "0.1.0"
+	, "keywords"			: [
+		  "javascript"
+		, "flex"
+	  ]
+	, "description"			: "CaffeinatedJS v0.1.0"
+	, "homepage"			: "https://github.com/CaffeinatedJS/CaffeinatedJS"
+	, "author"				: "Siqi Yi"
+	, "licenses"			: [
+		{
+			  "type"	: "MIT"
+			, "url"		: "https://github.com/CaffeinatedJS/CaffeinatedJS/blob/master/LICENSE-MIT"
+		}
+	  ]
+
+	, "scripts": { "test": "grunt test" }
+	
+	, "repository": {
+		  "type": "git"
+		, "url"	: "https://github.com/CaffeinatedJS/CaffeinatedJS.git"
+	  }
+	, "bugs": {
+		  "url"	: "https://github.com/CaffeinatedJS/CaffeinatedJS/issues"
+	  }
+
+	, "devDependencies"		: {
+
+		  "grunt"					: "~0.4.1"
+		, "grunt-contrib-connect"	: "~0.3.0"
+		, "grunt-contrib-concat"	: "~0.3.0"
+		, "grunt-contrib-clean"		: "~0.5.0"
+		, "grunt-contrib-jshint"	: "~0.6.0"
+		, "grunt-contrib-uglify"	: "~0.2.2"
+		, "grunt-contrib-qunit"		: "~0.2.2"
+
+		, "grunt-contrib-livereload": "~0.1.2"
+		, "grunt-regarde"			: "~0.1.1"
+
+		, "grunt-update-submodules"	: "~0.2.0"
+	  }
+
+	, "readmeFileName"		: "README.md"
+}
