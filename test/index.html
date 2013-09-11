@@ -1,0 +1,35 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+	<title>Caffeinated - Import Test Suite</title>
+
+	<!-- jquery -->
+	<!--<script src="http://code.jquery.com/jquery-1.7.min.js"></script>-->
+	<script src="../../lib/jquery/dist/jquery.js"></script>
+
+	<!-- qunit -->
+	<link rel="stylesheet" href="../../lib/qunit/qunit/qunit.css" type="text/css" media="screen" />
+	<script src="../../lib/qunit/qunit/qunit.js"></script>
+
+	<!-- jquery-mockjax -->
+	<script type="text/javascript" src="../../lib/jquery-mockjax/jquery.mockjax.js"></script>
+
+	<!-- phantomjs logging script-->
+	<!--script src="unit/bootstrap-phantom.js"></script-->
+
+	<!-- plugin sources -->
+	<script type="text/javascript" src="../../src/Predefined.js"></script>
+	<script type="text/javascript" id="cafe-loader" src="../../src/Loader.js" data-config="Loader.test.cnf.js" data-debug="true"></script>
+
+
+	<!-- unit tests -->
+	<script type="text/javascript" src="Loader.js"></script>
+
+</head>
+<body>
+	<div>
+		<div id="qunit"/>
+		<div id="qunit-fixture"/>
+	</div>
+</body>
+</html>
