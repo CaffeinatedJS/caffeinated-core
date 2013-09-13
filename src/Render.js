@@ -335,6 +335,7 @@
 					}
 
 					switch (funcName) {
+<<<<<<< HEAD
 						case "@concat"	:
 							expVal = " " + funcArgs.join("") + " "
 							break
@@ -344,6 +345,14 @@
 					}
 
 					base = base.replace(exps[i], expVal)
+=======
+						case "@concat" :
+							expVal = funcArgs.join("")
+							break
+					}
+
+					base = base.replace(exps[i], " " + expVal + " ")
+>>>>>>> 3c8801b80ff79d09f6ff890e368c1da4a1f3fdfb
 				}
 				//End
 				
