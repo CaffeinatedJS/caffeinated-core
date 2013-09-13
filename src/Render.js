@@ -336,23 +336,32 @@
 
 					switch (funcName) {
 						case "@concat"	:
-							expVal = " " + funcArgs.join("") + " "
+							if (funcArgs.indexOf("") == -1)
+								expVal = " " + funcArgs.join("") + " "
 							break
 						case "@ref"		:
-							expVal = funcArgs[0]
+							expVal = funcArgs[0] || funcArgs[1] || ""
 							break
 					}
 
 					base = base.replace(exps[i], expVal)
 				}
 				//End
-				
-				dom.innerHTML = base
+				//clean null-value attributes
+				dom.innerHTML = base.replace(/\s*[a-z,A-Z,\-,\_,0-9]+\s*\=\s*\"\"\s*/g, " ")
 
 				if (childs.length !== 1)
 					console.error("Unsupported base define.")
 
 				dom = childs[0]
+
+				/*
+				//clean null-value attributes
+				for (var i = 0; i < dom.attributes.length; i++) {
+					if (!dom.attributes[i].value)
+						dom.removeAttribute(dom.attributes[i].name)
+				}
+				//*/
 
 			} 
 
