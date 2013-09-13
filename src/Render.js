@@ -310,33 +310,62 @@
 			 * base dom like
 			 * 	'<div class="button" data-toggle="modal" data-target="myModal"/>' 
 			 */
-			if(/^<.+>$/.test(new String(base))) {
+			if (/^<[\s\S]+>$/.test(new String(base))) {
 				
 				var dom = document.createElement("div")
-					, childs = dom.childNodes
+					, childs = dom.children
+
+				//Rend Static UI Control Begin
+				var exps = base.match(/\s*\@[a-z,0-9]+\([^\)]+\)\s*/g)
+				for (var i = 0; i < exps.length; i++) {
+					var funcName = exps[i].trim().match(/^\@[a-z,0-9]+/)[0]
+						, funcArgs = exps[i].match(/\-?[0-9]+(\.[0-9]+)?\%?|\'.+\'|\".+\"|\$\{.+\}/g)
+						, expVal = " "
+
+					//Prepare Function Arguments
+					for (var j = 0; j < funcArgs.length; j++) {
+						
+						if (/\$\{[a-z,A-Z,0-9,\-,\_,]+\}/.test(funcArgs[j])) {
+							funcArgs[j] = node.attributes[funcArgs[j]
+											.match(/[a-z,A-Z,0-9,\-,\_,]+/)[0]]
+							continue
+						}
+
+						funcArgs[j] = funcArgs[j].replace(/[\'\"]/g, "")
+					}
+
+					switch (funcName) {
+						case "@concat"	:
+							expVal = " " + funcArgs.join("") + " "
+							break
+						case "@ref"		:
+							expVal = funcArgs[0]
+							break
+					}
+
+					base = base.replace(exps[i], expVal)
+				}
+				//End
 				
 				dom.innerHTML = base
 
-				/* 
-				 * childs.length === 0 means base's format is illegal
-				 * childs.length > 1 means base has multi base dom
-				 */
-				if(childs.length !== 1)
-					dom = document.createElement("div")
+				if (childs.length !== 1)
+					console.error("Unsupported base define.")
 
-				/* for multi base dom */
-				if(childs.length > 1)
-					for (var i = 0; i < childs.length; i++) {
-						dom.appendChild(childs[i])
-					}
+				dom = childs[0]
+
+			} 
 
 			/*
 			 * base dom like "div"
 			 * NOTICED: DO NOT SUPPORT tag name with namespace for now!
 			 */
-			} else if(this.htmlTagNameReg.test(new String(base))) {
+			else if (this.htmlTagNameReg.test(new String(base))) {
 
 				dom = document.createElement(base)
+
+				
+			}
 
 			/*
 			 * base dom like an Object
@@ -346,8 +375,8 @@
 			 * 			class : "button"
 			 * 		}
 			 * 	}
-			 */	
-			} else if(base.constructor === Object) {
+			 */
+			else if (base.constructor === Object) {
 
 				var tagName = base.tagName
 								|| base.tag
@@ -363,19 +392,23 @@
 				dom = document.createElement(tagName)
 			}
 
+
 			dom.id = node.id || this.generateElementId(node.name)
 
 			for (var n in attrs) {
 				attrs[n] = this.valueOf(attrs[n])
+				dom.setAttribute(this.toHTMLAttrName(n), attrs[n])
 			}
 
 			context[dom.id] = attrs
 			context.__queue__.unshift({name: node.name, id: dom.id})
 
 			//TODO:
+			/*
 			for (var n in attrs) {
 				dom.setAttribute(this.toHTMLAttrName(n), attrs[n])
 			}
+			//*/
 
 			if(this.tagNameWithNS.test(node.name))
 				dom.classList.add(node.name.replace(/\:/, '_'))
