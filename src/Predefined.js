@@ -18,7 +18,11 @@
 
 	cafe.defaults = {
 		ui_bases	: {
-			"bs:button"			: "button"
+			  "bs:button"		:
+					'<button '
+					+ 'class="btn @concat("btn-", ${face-type}) @concat("btn-", ${size})" '
+					+ 'data-loading-text="@ref(${loading-text})"'
+					+ '></button>'
 			, "bs:list"			: "ul"
 			, "bs:label"		: "label"
 			, "bs:chkbox"		: "label"
