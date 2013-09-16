@@ -265,7 +265,9 @@
 				var child = root.childs[i]
 
 				dom.appendChild(document.createTextNode("\n" + context.__SPACES__))
+				//TODO: Detect append position
 				dom.appendChild(this.generate(child, context))
+
 
 			}
 
@@ -316,10 +318,10 @@
 					, childs = dom.children
 
 				//Rend Static UI Control Begin
-				var exps = base.match(/\s*\@[a-z,0-9]+\([^\)]+\)\s*/g)
+				var exps = base.match(/\@[a-z,0-9]+\([^\)]*\)/g) || []
 				for (var i = 0; i < exps.length; i++) {
 					var funcName = exps[i].trim().match(/^\@[a-z,0-9]+/)[0]
-						, funcArgs = exps[i].match(/\-?[0-9]+(\.[0-9]+)?\%?|\'.+\'|\".+\"|\$\{.+\}/g)
+						, funcArgs = exps[i].match(/\-?[0-9]+(\.[0-9]+)?\%?|\'.+\'|\".+\"|\$\{.+\}/g) || []
 						, expVal = " "
 
 					//Prepare Function Arguments
@@ -337,10 +339,17 @@
 					switch (funcName) {
 						case "@concat"	:
 							if (funcArgs.indexOf("") == -1)
-								expVal = " " + funcArgs.join("") + " "
+								expVal = funcArgs.join("")
 							break
 						case "@ref"		:
 							expVal = funcArgs[0] || funcArgs[1] || ""
+							break
+						case "@text"	:
+							if (node.childs.length == 1 && node.childs[0].type == "Text") {
+								expVal = node.childs[0].text
+								node.childs = []
+							} else
+								expVal = "CAN NOT MATCH AN SINGLE TEXT NODE"
 							break
 					}
 

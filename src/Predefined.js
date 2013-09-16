@@ -20,15 +20,36 @@
 		ui_bases	: {
 			  "bs:button"		:
 					'<button '
+					+ 'type="button" '
 					+ 'class="btn @concat("btn-", ${face-type}) @concat("btn-", ${size})" '
 					+ 'data-loading-text="@ref(${loading-text})"'
 					+ '></button>'
+			
+			, "bs:modal"		:
+					'<div '
+					+ 'class="modal fade @ref(${visible})" '
+					+ '/>'
+			, "bs:modalHeader"	: '<div class="modal-header"/>'
+			, "bs:modalBody"	: '<div class="modal-body"/>'
+			, "bs:modalFooter"	: '<div class="modal-footer"/>'
+			, "bs:staticModal"	: '<div class="modal"/>'
+
+			, "bs:dropdown"		: '<div class="dropdown"/>'
+			, "bs:dropdownToggle":
+					'<a class="dropdown-toggle" '
+					+ 'data-toggle="dropdown" '
+					+ 'href="@ref(${href})"/>'
+			, "bs:dropdownMenu"	: '<ul class="dropdown-menu"/>'
+			, "bs:item"			: '<li><a href="@ref(${href})">@text()</a></li>'
+
+			, "bs:caret"		: '<span class="caret"></span>'
+
 			, "bs:list"			: "ul"
 			, "bs:label"		: "label"
 			, "bs:chkbox"		: "label"
 			, "bs:radio"		: "label"
 			, "bs:list"			: "ul"
-			, "bs:item"			: "li"
+			//, "bs:item"			: "li"
 			, "bs:divider"		: "li"
 			, "bs:datepicker"	: "input"
 			, "bs:grid"			: "table"
