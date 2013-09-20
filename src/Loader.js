@@ -18,7 +18,8 @@
 	}
 
 	cafe.config = function(options) {
-		this.options = extend({}, cafe.defaults, this.options, options)
+		this.options = this.options || {}
+		this.options = extend(true, {}, cafe.defaults, this.options, options)
 	}
 
 	/*

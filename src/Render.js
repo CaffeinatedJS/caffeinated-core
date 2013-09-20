@@ -260,14 +260,23 @@
 
 			context.__SPACES__ += "\t"
 
+			var appendPoint = dom.children.length
+					? this.findAppendPoint(dom)
+					: dom
+
 			for (var i = 0; i < root.childs.length; i++) {
 				
 				var child = root.childs[i]
 
-				dom.appendChild(document.createTextNode("\n" + context.__SPACES__))
-				//TODO: Detect append position
-				dom.appendChild(this.generate(child, context))
+				if (appendPoint instanceof Element) {
+					appendPoint.appendChild(
+						document.createTextNode("\n" + context.__SPACES__))
+					appendPoint.appendChild(this.generate(child, context))
+					continue
+				}
 
+				appendPoint.parent.insertBefore(
+					this.generate(child, context), appendPoint.before)
 
 			}
 
@@ -275,6 +284,37 @@
 			dom.appendChild(document.createTextNode("\n" + context.__SPACES__))
 
 			return dom
+
+		}
+
+		, findAppendPoint	: function(dom) {
+
+			var i = 0
+				, childs = dom.children
+				, parent = dom
+				, point = dom
+
+			if (!childs || !childs.length) return dom
+
+			while (i < childs.length
+				&& childs[i].className !== "__bs-append-point__") {
+				i++
+			}
+
+			i = i == 0 ? i : i - 1
+
+			if (childs[i].className === "__bs-append-point__") {
+				var before = i === childs.length - 1
+						? null : childs[i]
+				parent.removeChild(childs[i])
+				return before ? {parent: parent, before: before} : parent
+			}
+
+			for (var i = 0; i < childs.length; i++) {
+				point = this.findAppendPoint(childs[i])
+			}
+
+			return point
 
 		}
 
@@ -321,7 +361,8 @@
 				var exps = base.match(/\@[a-z,0-9]+\([^\)]*\)/g) || []
 				for (var i = 0; i < exps.length; i++) {
 					var funcName = exps[i].trim().match(/^\@[a-z,0-9]+/)[0]
-						, funcArgs = exps[i].match(/\-?[0-9]+(\.[0-9]+)?\%?|\'.+\'|\".+\"|\$\{.+\}/g) || []
+						, funcArgs = exps[i].match(
+							/\-?[0-9]+(\.[0-9]+)?\%?|\'.+\'|\"[^\"]*\"|\$\{.+\}/g) || []
 						, expVal = " "
 
 					//Prepare Function Arguments
@@ -338,19 +379,34 @@
 
 					switch (funcName) {
 						case "@concat"	:
-							if (funcArgs.indexOf("") == -1)
+							if (funcArgs.indexOf("") == -1 && funcArgs.indexOf(undefined) == -1)
 								expVal = funcArgs.join("")
 							break
 						case "@ref"		:
 							expVal = funcArgs[0] || funcArgs[1] || ""
 							break
+						case "@content"	:
+							expVal = '<div class="__bs-append-point__"/>'
+							break
+						case "@if"		:
+							expVal = funcArgs[1]
+							if (funcArgs[0] == false
+									|| funcArgs[0] == null
+									|| funcArgs[0] == undefined
+									|| funcArgs[0] == 0)
+								expVal = funcArgs[2]
+							break
+						//*
 						case "@text"	:
-							if (node.childs.length == 1 && node.childs[0].type == "Text") {
+							if (node.childs.length == 1
+								&& node.childs[0].type == "Text") {
+
 								expVal = node.childs[0].text
 								node.childs = []
 							} else
 								expVal = "CAN NOT MATCH AN SINGLE TEXT NODE"
 							break
+						//*/
 					}
 
 					base = base.replace(exps[i], expVal)

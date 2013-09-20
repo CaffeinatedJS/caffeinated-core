@@ -29,20 +29,33 @@
 					'<div '
 					+ 'class="modal fade @ref(${visible})" '
 					+ '/>'
-			, "bs:modalHeader"	: '<div class="modal-header"/>'
-			, "bs:modalBody"	: '<div class="modal-body"/>'
-			, "bs:modalFooter"	: '<div class="modal-footer"/>'
-			, "bs:staticModal"	: '<div class="modal"/>'
+			, "bs:modal-header"	: '<div class="modal-header"/>'
+			, "bs:modal-body"	: '<div class="modal-body"/>'
+			, "bs:modal-footer"	: '<div class="modal-footer"/>'
+			, "bs:static-modal"	: '<div class="modal"/>'
 
 			, "bs:dropdown"		: '<div class="dropdown"/>'
-			, "bs:dropdownToggle":
+			, "bs:dropdown-toggle":
 					'<a class="dropdown-toggle" '
 					+ 'data-toggle="dropdown" '
 					+ 'href="@ref(${href})"/>'
-			, "bs:dropdownMenu"	: '<ul class="dropdown-menu"/>'
-			, "bs:item"			: '<li><a href="@ref(${href})">@text()</a></li>'
+			, "bs:dropdown-menu"	: '<ul class="dropdown-menu"/>'
+			, "bs:item"			: '<li class="@if(${actived}, "active", "")"><a href="@ref(${href})">@text()</a></li>'
+			, "bs:divider"	: '<li class="divider"></li>'
 
-			, "bs:caret"		: '<span class="caret"></span>'
+			, "bs:caret"		: '<span class="caret"/>'
+			, "bs:icon"			: '<span class="icon-@ref(${face}) @concat("icon-", ${color})"/>'
+
+			, "bs:navbar"		: '<div class="navbar @concat("navbar-", ${position}) @concat("navbar-", ${face-type})">'
+					+ '<div class="navbar-inner"><div class="container">@content()</div></div></div>'
+			, "bs:nav-collapse"	: '<div class="nav-collapse collapse"/>'
+			, "bs:nav-collapse-trigger": '<button type="button" class="btn btn-navbar" '
+					+ 'data-toggle="collapse" data-target=".nav-collapse">'
+					+ '<span class="icon-bar"></span><span class="icon-bar"></span><span class="icon-bar"></span>'
+					+ '</button>'
+			, "bs:brand"		: '<a class="brand">@content()</a>'
+			, "bs:nav"			: '<ul class="nav @concat("nav-", ${type})"/>'
+			, "bs:item-dropdown": '<li class="dropdown"/>'
 
 			, "bs:list"			: "ul"
 			, "bs:label"		: "label"
@@ -89,7 +102,7 @@
 		}
 	
 		// Handle case when target is a string or something (possible in deep copy)
-		if ( typeof target !== "object" && !jQuery.isFunction(target) ) {
+		if ( typeof target !== "object" && !isFunction(target) ) {
 			target = {}
 		}
 	
@@ -113,17 +126,17 @@
 					}
 	
 					// Recurse if we're merging plain objects or arrays
-					if ( deep && copy && ( jQuery.isPlainObject(copy) || (copyIsArray = jQuery.isArray(copy)) ) ) {
+					if ( deep && copy && ( isPlainObject(copy) || (copyIsArray = isArray(copy)) ) ) {
 						if ( copyIsArray ) {
 							copyIsArray = false
-							clone = src && jQuery.isArray(src) ? src : []
+							clone = src && isArray(src) ? src : []
 	
 						} else {
-							clone = src && jQuery.isPlainObject(src) ? src : {}
+							clone = src && isPlainObject(src) ? src : {}
 						}
 	
 						// Never move original objects, clone them
-						target[ name ] = jQuery.extend( deep, clone, copy )
+						target[ name ] = extend( deep, clone, copy )
 	
 					// Don't bring in undefined values
 					} else if ( copy !== undefined ) {
@@ -136,6 +149,55 @@
 		// Return the modified object
 		return target
 	}
+
+	isPlainObject = function( obj ) {
+		// Must be an Object.
+		// Because of IE, we also have to check the presence of the constructor property.
+		// Make sure that DOM nodes and window objects don't pass through, as well
+		if ( !obj || type(obj) !== "object" || obj.nodeType || isWindow( obj ) ) {
+			return false;
+		}
+
+		try {
+			// Not own constructor property must be Object
+			if ( obj.constructor &&
+				!hasOwn.call(obj, "constructor") &&
+				!hasOwn.call(obj.constructor.prototype, "isPrototypeOf") ) {
+				return false;
+			}
+		} catch ( e ) {
+			// IE8,9 Will throw exceptions on certain host objects #9897
+			return false;
+		}
+
+		// Own properties are enumerated firstly, so to speed up,
+		// if last one is own, then all properties are own.
+
+		var key;
+		for ( key in obj ) {}
+
+		return key === undefined || hasOwn.call( obj, key );
+	}
+
+	isWindow = function( obj ) {
+		return obj != null && obj == obj.window;
+	}
+
+	isArray = Array.isArray || function( obj ) {
+		return type(obj) === "array";
+	}
+
+	type = function( obj ) {
+		return obj == null ?
+			String( obj ) :
+			toString.call(obj) || "object";
+	}
+
+	isFunction = function( obj ) {
+		return type(obj) === "function";
+	}
+
+
 
 	var getCookieItem = function(key) {
 			if (!key || !hasCookieItem(key)) { return null; }
