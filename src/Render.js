@@ -50,9 +50,10 @@
 				var  required = options.required
 					, exsitBeforeLogin = options.beforeLogin
 					, $element = $("#" + id)
+					, pluginName = name && name.replace(/\-[a-z]/g, function(str) { return str.substring(1,2).toUpperCase()})
 
-				if($.fn[name])
-					$element[name].call($element, options)
+				if($.fn[pluginName])
+					$element[pluginName].call($element, options)
 
 			}
 
@@ -63,6 +64,8 @@
 
 			//Process Select->Options value
 			$("option:not([value])").val("")
+
+			$('*').trigger("rend-complete")
 
 		}
 
@@ -354,79 +357,7 @@
 			 */
 			if (/^<[\s\S]+>$/.test(new String(base))) {
 				
-				var dom = document.createElement("div")
-					, childs = dom.children
-
-				//Rend Static UI Control Begin
-				var exps = base.match(/\@[a-z,0-9]+\([^\)]*\)/g) || []
-				for (var i = 0; i < exps.length; i++) {
-					var funcName = exps[i].trim().match(/^\@[a-z,0-9]+/)[0]
-						, funcArgs = exps[i].match(
-							/\-?[0-9]+(\.[0-9]+)?\%?|\'.+\'|\"[^\"]*\"|\$\{.+\}/g) || []
-						, expVal = " "
-
-					//Prepare Function Arguments
-					for (var j = 0; j < funcArgs.length; j++) {
-						
-						if (/\$\{[a-z,A-Z,0-9,\-,\_,]+\}/.test(funcArgs[j])) {
-							funcArgs[j] = node.attributes[funcArgs[j]
-											.match(/[a-z,A-Z,0-9,\-,\_,]+/)[0]]
-							continue
-						}
-
-						funcArgs[j] = funcArgs[j].replace(/[\'\"]/g, "")
-					}
-
-					switch (funcName) {
-						case "@concat"	:
-							if (funcArgs.indexOf("") == -1 && funcArgs.indexOf(undefined) == -1)
-								expVal = funcArgs.join("")
-							break
-						case "@ref"		:
-							expVal = funcArgs[0] || funcArgs[1] || ""
-							break
-						case "@content"	:
-							expVal = '<div class="__bs-append-point__"/>'
-							break
-						case "@if"		:
-							expVal = funcArgs[1]
-							if (funcArgs[0] == false
-									|| funcArgs[0] == null
-									|| funcArgs[0] == undefined
-									|| funcArgs[0] == 0)
-								expVal = funcArgs[2]
-							break
-						//*
-						case "@text"	:
-							if (node.childs.length == 1
-								&& node.childs[0].type == "Text") {
-
-								expVal = node.childs[0].text
-								node.childs = []
-							} else
-								expVal = "CAN NOT MATCH AN SINGLE TEXT NODE"
-							break
-						//*/
-					}
-
-					base = base.replace(exps[i], expVal)
-				}
-				//End
-				//clean null-value attributes
-				dom.innerHTML = base.replace(/\s*[a-z,A-Z,\-,\_,0-9]+\s*\=\s*\"\"\s*/g, " ")
-
-				if (childs.length !== 1)
-					console.error("Unsupported base define.")
-
-				dom = childs[0]
-
-				/*
-				//clean null-value attributes
-				for (var i = 0; i < dom.attributes.length; i++) {
-					if (!dom.attributes[i].value)
-						dom.removeAttribute(dom.attributes[i].name)
-				}
-				//*/
+				dom = this.generateDynamicBase(node, base, attrs)
 
 			} 
 
@@ -505,8 +436,89 @@
 			return document.createTextNode(node.text)
 		}
 
-		, parseBase	: function(node){
-			
+		, generateDynamicBase: function(node, base, attrs) {
+
+			var dom = document.createElement("div")
+				, childs = dom.children
+				, exps = base.match(/\@[a-z,0-9]+\([^\)]*\)/g) || []
+
+			for (var i = 0; i < exps.length; i++) {
+
+				var funcName = exps[i].trim().match(/^\@[a-z,0-9]+/)[0]
+					, funcArgsMatcher =
+						/\-?[0-9]+(\.[0-9]+)?\%?|\'.+\'|\"[^\"]*\"|\$\{.+\}/g
+					, funcArgs =
+						exps[i].match(funcArgsMatcher) || []
+					, funcArgNames = []
+					, expVal = " "
+
+				//Prepare Function Arguments
+				for (var j = 0; j < funcArgs.length; j++) {
+
+					funcArgNames[j] = undefined
+					
+					if (/\$\{[a-z,A-Z,0-9,\-,\_,]+\}/.test(funcArgs[j])) {
+						var funcArgName = 
+								funcArgNames[j] = 
+									funcArgs[j].match(/[a-z,A-Z,0-9,\-,\_,]+/)[0]
+						funcArgs[j] = node.attributes[funcArgName]
+						continue
+					}
+
+					funcArgs[j] = funcArgs[j].replace(/[\'\"]/g, "")
+
+				}
+
+				switch (funcName) {
+
+					case "@concat"	:
+						if (funcArgs.indexOf("") == -1 && funcArgs.indexOf(undefined) == -1)
+							expVal = funcArgs.join("")
+						break
+						
+					case "@ref"		:
+						expVal = funcArgs[0] || funcArgs[1] || ""
+						break
+
+					case "@content"	:
+						if (node.childs.length == 1
+							&& node.childs[0].type == "Text") {
+
+							expVal = node.childs[0].text
+							node.childs = []
+						} else
+							expVal = '<div class="__bs-append-point__"/>'
+						break
+
+					case "@if"		:
+						expVal = funcArgs[1]
+						if (funcArgs[0] == false
+								|| funcArgs[0] == "false"
+								|| funcArgs[0] == null
+								|| funcArgs[0] == undefined
+								|| funcArgs[0] == 0)
+							expVal = funcArgs[2]
+						break
+
+					case "@move"	:
+						expVal = funcArgs[0] || funcArgs[1]
+						delete attrs[funcArgNames[0]]
+						break
+
+				}
+
+				base = base.replace(exps[i], expVal)
+			}
+			//End
+			//clean null-value attributes
+			dom.innerHTML = base.replace(/\s*[a-z,A-Z,\-,\_,0-9]+\s*\=\s*\"\"\s*/g, " ")
+
+			if (childs.length !== 1)
+				console.error("Unsupported base define.\n" + base)
+
+			dom = childs[0]
+
+			return dom
 		}
 
 		, valueOf			: function(val){
@@ -540,6 +552,24 @@
 			return "gen_" + name + "_" + (++ids[name]);
 
 		}
+	}
+
+	var RenderArguments = function(args) {
+		this.args = args instanceof Array ? args : []
+	}
+
+	RenderArguments.prototype = {
+		indexOf		: function(arg) {
+
+		}
+
+		, concat	: function() {
+
+		}
+
+		, join		: function() {}
+
+
 	}
 
 	extend(cafe, {

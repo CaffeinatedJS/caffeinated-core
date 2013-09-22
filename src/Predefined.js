@@ -40,7 +40,7 @@
 					+ 'data-toggle="dropdown" '
 					+ 'href="@ref(${href})"/>'
 			, "bs:dropdown-menu"	: '<ul class="dropdown-menu"/>'
-			, "bs:item"			: '<li class="@if(${actived}, "active", "")"><a href="@ref(${href})">@text()</a></li>'
+			, "bs:item"			: '<li><a href="@ref(${href})" data-toggle="@move(${data-toggle}, "link")" actived="@move(${actived}, "false")">@content()</a></li>'
 			, "bs:divider"	: '<li class="divider"></li>'
 
 			, "bs:caret"		: '<span class="caret"/>'
@@ -53,9 +53,20 @@
 					+ 'data-toggle="collapse" data-target=".nav-collapse">'
 					+ '<span class="icon-bar"></span><span class="icon-bar"></span><span class="icon-bar"></span>'
 					+ '</button>'
-			, "bs:brand"		: '<a class="brand">@content()</a>'
-			, "bs:nav"			: '<ul class="nav @concat("nav-", ${type})"/>'
+			, "bs:brand"		: '<a class="brand"></a>'
+			, "bs:nav"			: '<ul class="nav @concat("nav-", ${type}) @if(${stacked}, "nav-stacked", "")"/>'
 			, "bs:item-dropdown": '<li class="dropdown"/>'
+
+			, "bs:tab-content"	: '<div class="tab-content"/>'
+			, "bs:tab-panel"	: '<div class="tab-pane"/>'
+
+			, "bs:accordion"	: '<div clss="accordion"/>'
+			, "bs:accordion-group": '<div class="accordion-group"/>'
+			, "bs:accordion-header": '<div class="accordion-heading"/>'
+			, "bs:accordion-toggle": '<a class="accordion-toggle" data-toggle="collapse"/>'
+			, "bs:accordion-body": '<div class="accordion-body collapse">'
+					+ '<div class="accordion-inner">@content()'
+					+ '</div></div>'
 
 			, "bs:list"			: "ul"
 			, "bs:label"		: "label"
@@ -63,7 +74,7 @@
 			, "bs:radio"		: "label"
 			, "bs:list"			: "ul"
 			//, "bs:item"			: "li"
-			, "bs:divider"		: "li"
+			//, "bs:divider"		: "li"
 			, "bs:datepicker"	: "input"
 			, "bs:grid"			: "table"
 			, "bs:select" 		: "select"
