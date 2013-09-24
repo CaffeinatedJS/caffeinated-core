@@ -1,5 +1,7 @@
 !function(window, extend, cafe, $) {
 
+	var APPEND_POINT_CLASS = "__bs-append-point__"
+
 	var Render = function (xmlParser, htmlGenerator) {
 		this.isIE = window.navigator.userAgent.indexOf('MSIE') > 0
 		
@@ -65,7 +67,7 @@
 			//Process Select->Options value
 			$("option:not([value])").val("")
 
-			$('*').trigger("rend-complete")
+			$(html).find('*').trigger("rend-complete")
 
 		}
 
@@ -300,13 +302,13 @@
 			if (!childs || !childs.length) return dom
 
 			while (i < childs.length
-				&& childs[i].className !== "__bs-append-point__") {
+				&& childs[i].className !== APPEND_POINT_CLASS) {
 				i++
 			}
 
 			i = i == 0 ? i : i - 1
 
-			if (childs[i].className === "__bs-append-point__") {
+			if (childs[i].className === APPEND_POINT_CLASS) {
 				var before = i === childs.length - 1
 						? null : childs[i]
 				parent.removeChild(childs[i])
@@ -475,19 +477,13 @@
 						if (funcArgs.indexOf("") == -1 && funcArgs.indexOf(undefined) == -1)
 							expVal = funcArgs.join("")
 						break
-						
+
 					case "@ref"		:
 						expVal = funcArgs[0] || funcArgs[1] || ""
 						break
 
 					case "@content"	:
-						if (node.childs.length == 1
-							&& node.childs[0].type == "Text") {
-
-							expVal = node.childs[0].text
-							node.childs = []
-						} else
-							expVal = '<div class="__bs-append-point__"/>'
+						expVal = '<div class="' + APPEND_POINT_CLASS + '/>'
 						break
 
 					case "@if"		:
@@ -552,24 +548,6 @@
 			return "gen_" + name + "_" + (++ids[name]);
 
 		}
-	}
-
-	var RenderArguments = function(args) {
-		this.args = args instanceof Array ? args : []
-	}
-
-	RenderArguments.prototype = {
-		indexOf		: function(arg) {
-
-		}
-
-		, concat	: function() {
-
-		}
-
-		, join		: function() {}
-
-
 	}
 
 	extend(cafe, {
