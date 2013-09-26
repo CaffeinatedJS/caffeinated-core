@@ -58,9 +58,10 @@
 
 			, "bs:navbar"		: '<div '
 					+ 'class="navbar @concat("navbar-", ${position}) '
+					+ '@if(${justified}, "justified", "") '
 					+ '@concat("navbar-", ${face-type})">'
-					+ '<div class="navbar-inner"><div class="container">@content()'
-					+ '</div></div></div>'
+					+ '<div class="navbar-inner">@content()'
+					+ '</div></div>'
 			, "bs:nav-collapse"	: '<div class="nav-collapse collapse"/>'
 			, "bs:nav-collapse-trigger": '<button type="button" class="btn btn-navbar" '
 					+ 'data-toggle="collapse" data-target=".nav-collapse">'
@@ -68,13 +69,16 @@
 					+ '</span><span class="icon-bar"></span>'
 					+ '</button>'
 			, "bs:brand"		: '<a class="brand"></a>'
+
 			, "bs:nav"			: '<ul class="nav '
 					+ '@concat("nav-", ${type}) @if(${stacked}, "nav-stacked", "")"/>'
 			, "bs:item-dropdown": '<li class="dropdown"/>'
 			, "bs:item-submenu"	: '<li class="dropdown-submenu"/>'
 
+
 			, "bs:tab-content"	: '<div class="tab-content"/>'
 			, "bs:tab-panel"	: '<div class="tab-pane"/>'
+
 
 			, "bs:accordion"	: '<div clss="accordion"/>'
 			, "bs:accordion-group": '<div class="accordion-group"/>'
@@ -83,6 +87,40 @@
 			, "bs:accordion-body": '<div class="accordion-body collapse">'
 					+ '<div class="accordion-inner">@content()'
 					+ '</div></div>'
+
+			, "bs:position"		: '<div style="'
+					+ 'position: @ref(${type}, "static")'
+
+					+ '@concat("; top:", ${top})'
+					+ '@concat("; right:", ${right})'
+					+ '@concat("; bottom:", ${bottom})'
+					+ '@concat("; left:", ${left})'
+
+					+ '@concat("; margin:", ${margin})'
+					+ '@concat("; margin-left:", ${margin-left})'
+					+ '@concat("; margin-right:", ${margin-right})'
+					+ '@concat("; margin-top:", ${margin-top})'
+					+ '@concat("; margin-bottom:", ${margin-bottom})'
+
+					+ '@concat("; padding:", ${padding})'
+					+ '@concat("; padding-left:", ${padding-left})'
+					+ '@concat("; padding-right:", ${padding-right})'
+					+ '@concat("; padding-top:", ${padding-top})'
+					+ '@concat("; padding-bottom:", ${padding-bottom})'
+
+					+ '@concat("; width:", ${width})'
+					+ '@concat("; height:", ${height})'
+					+ '@concat("; z-index:", ${z-index})'
+
+					+ '"/>'
+			, "bs:container"	: '<div class="container@concat("-", ${type})" />'
+			, "bs:row"			: '<div class="row@concat("-", ${type})" />'
+			, "bs:column"		: '<div class="span@ref(${span}, "3")" />'
+
+
+			, "bs:badge"		: '<span class="badge @concat("badge-", ${face-type}) '
+					+ '@concat("pull-", ${align})"/>'
+			, "bs:well"			: '<div class="well"/>'
 
 			, "bs:list"			: "ul"
 			, "bs:label"		: "label"

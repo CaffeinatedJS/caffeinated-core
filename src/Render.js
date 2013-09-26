@@ -452,7 +452,7 @@
 					, funcArgs =
 						exps[i].match(funcArgsMatcher) || []
 					, funcArgNames = []
-					, expVal = " "
+					, expVal = ""
 
 				//Prepare Function Arguments
 				for (var j = 0; j < funcArgs.length; j++) {
