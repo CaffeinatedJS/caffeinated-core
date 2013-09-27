@@ -126,6 +126,7 @@
 					delta++
 					continue
 				}
+				child.parent = node
 				node.childs[i - delta] = child
 				
 			}
@@ -442,11 +443,11 @@
 
 			var dom = document.createElement("div")
 				, childs = dom.children
-				, exps = base.match(/\@[a-z,0-9]+\([^\)]*\)/g) || []
+				, exps = base.match(/\@[a-z,0-9,\-,\_]+\([^\)]*\)/g) || []
 
 			for (var i = 0; i < exps.length; i++) {
 
-				var funcName = exps[i].trim().match(/^\@[a-z,0-9]+/)[0]
+				var funcName = exps[i].trim().match(/^\@[a-z,0-9,\-,\_]+/)[0]
 					, funcArgsMatcher =
 						/\-?[0-9]+(\.[0-9]+)?\%?|\'.+\'|\"[^\"]*\"|\$\{.+\}/g
 					, funcArgs =
@@ -499,6 +500,13 @@
 					case "@move"	:
 						expVal = funcArgs[0] || funcArgs[1]
 						delete attrs[funcArgNames[0]]
+						break
+
+					case "@if-parent":
+						var testExp = node.parent[funcArgs[0]]
+						expVal = funcArgs[2]
+						if (testExp !== funcArgs[1])
+							expVal = funcArgs[3]
 						break
 
 				}

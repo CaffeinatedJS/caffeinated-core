@@ -41,6 +41,7 @@
 
 			, "bs:dropdown"		: '<div class="dropdown"/>'
 			, "bs:dropdown-toggle":
+					//'<a class="@if-parent("name", "", "dropdown-toggle", "")" '
 					'<a class="dropdown-toggle" '
 					+ 'data-toggle="dropdown" '
 					+ 'href="@ref(${href}, "#")"/>'
@@ -50,7 +51,7 @@
 					+ 'actived="@move(${actived}, "false")">@content()</a>'
 					+ '</li>'
 			, "bs:divider"	: '<li class="divider"></li>'
-			, "bs:submenu-toggle": '<a />'
+			//, "bs:submenu-toggle": '<a />'
 
 			, "bs:caret"		: '<span class="caret"/>'
 			, "bs:icon"			: '<span '
@@ -72,8 +73,8 @@
 
 			, "bs:nav"			: '<ul class="nav '
 					+ '@concat("nav-", ${type}) @if(${stacked}, "nav-stacked", "")"/>'
-			, "bs:item-dropdown": '<li class="dropdown"/>'
-			, "bs:item-submenu"	: '<li class="dropdown-submenu"/>'
+			, "bs:item-dropdown": '<li class="dropdown@if-parent("name", "bs:dropdown-menu", "-submenu", "")"/>'
+			//, "bs:item-submenu"	: '<li class="dropdown-submenu"/>'
 
 
 			, "bs:tab-content"	: '<div class="tab-content"/>'
