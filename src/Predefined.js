@@ -216,6 +216,10 @@
 		return target
 	}
 
+	hasOwn = Object.prototype.hasOwnProperty
+	toString = Object.prototype.toString
+	class2type = ["Boolean", "Number", "String", "Function", "Array", "Date", "RegExp", "Object"]
+
 	isPlainObject = function( obj ) {
 		// Must be an Object.
 		// Because of IE, we also have to check the presence of the constructor property.
@@ -256,7 +260,7 @@
 	type = function( obj ) {
 		return obj == null ?
 			String( obj ) :
-			toString.call(obj) || "object";
+			class2type[ toString.call(obj) ] || "object";
 	}
 
 	isFunction = function( obj ) {
